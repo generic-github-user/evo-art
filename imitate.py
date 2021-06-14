@@ -86,6 +86,9 @@ for i in range(generations):
             # print(l)
             l[0] += np.random.normal(0, 30, [2]).astype(int)
             l[0] %= dims
+            l[2] += np.random.normal(0, 30, [3]).astype(int)
+            l[2] %= [255] * 3
+
             pos, text, color = l
             d.text(tuple(pos), text, fill=tuple(color), font=font)
 
