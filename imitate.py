@@ -4,7 +4,7 @@ from matplotlib.image import imread
 import importlib.util
 import sys
 import glob
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 import string
 import random
 import copy
@@ -37,36 +37,43 @@ p = G.point.Point([1, 1])
 p.print()
 
 images = glob.glob('./sample-images/*.jpg')
-image_data = imread(images[0])
-print(image_data[0])
+# image_data = imread(images[0])
+image_data = Image.open(images[0])
+downscaled = np.array(image_data.size) * 0.25
+image_data.thumbnail(downscaled)
+# print(image_data[0])
 population = []
 
 # generated = np.zeros_like(image_data)
-height, width, channels = image_data.shape
-num = 5
+width, height = image_data.size
+num = 20
 history = []
 generations = 100
+parts = 20
+dims = (width, height)
+# font = ImageFont.truetype("Pillow/Tests/fonts/FreeMono.ttf", 40)
+# font = ImageFont.load('arial.pil')
+font = ImageFont.truetype('arial.ttf', 20)
 
 for i in range(num):
     group = [[], None]
-    dims = (width, height)
     generated = Image.new('RGB', dims, (255,)*3)
     d = ImageDraw.Draw(generated)
-    for j in range(100):
+    for j in range(parts):
         a = [None] * 2
         pos = np.random.randint([0, 0], dims, [2])
         # print(pos)
         text = random.choice(string.ascii_letters)
         color = [255, 0, 0]
-        d.text(tuple(pos), text, fill=tuple(color))
+        d.text(tuple(pos), text, fill=tuple(color), font=font)
         a = [pos, text, color]
         group[0].append(a)
-    difference = np.abs(generated - image_data).mean()
+    difference = np.abs(generated - np.array(image_data)).mean()
     group[1] = difference
     population.append(group)
 
 for i in range(generations):
-    population.sort(key=lambda x: x[1], reverse=True)
+    population.sort(key=lambda x: x[1], reverse=False)
     # print(population)
     best = population[0]
     print(best[1])
@@ -77,11 +84,12 @@ for i in range(generations):
         d = ImageDraw.Draw(generated)
         for l in g[0]:
             # print(l)
-            l[0] += np.random.normal(-10, 10, [2]).astype(int)
+            l[0] += np.random.normal(0, 30, [2]).astype(int)
+            l[0] %= dims
             pos, text, color = l
-            d.text(tuple(pos), text, fill=tuple(color))
+            d.text(tuple(pos), text, fill=tuple(color), font=font)
 
-        difference = np.abs(generated - image_data).mean()
+        difference = np.abs(generated - np.array(image_data)).mean()
         population[j][1] = difference
 
 
@@ -89,3 +97,5 @@ for i in range(generations):
 generated.save('./result-image.png')
 plt.plot(history)
 plt.show()
+
+# TODO: gradually upscale image
