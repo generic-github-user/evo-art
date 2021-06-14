@@ -38,22 +38,24 @@ p.print()
 
 images = glob.glob('./sample-images/*.jpg')
 # image_data = imread(images[0])
-image_data = Image.open(images[0])
-downscaled = np.array(image_data.size) * 0.25
+path = images[1]
+print(path)
+image_data = Image.open(path)
+downscaled = np.array(image_data.size) * 0.1
 image_data.thumbnail(downscaled)
 # print(image_data[0])
 population = []
 
 # generated = np.zeros_like(image_data)
 width, height = image_data.size
-num = 20
+num = 10
 history = []
 generations = 100
 parts = 20
 dims = (width, height)
 # font = ImageFont.truetype("Pillow/Tests/fonts/FreeMono.ttf", 40)
 # font = ImageFont.load('arial.pil')
-font = ImageFont.truetype('arial.ttf', 20)
+font = ImageFont.truetype('arial.ttf', 5)
 
 for i in range(num):
     group = [[], None]
@@ -65,7 +67,7 @@ for i in range(num):
         # print(pos)
         text = random.choice(string.ascii_letters)
         color = [255, 0, 0]
-        d.text(tuple(pos), text, fill=tuple(color), font=font)
+        # d.text(tuple(pos), text, fill=tuple(color), font=font)
         a = [pos, text, color]
         group[0].append(a)
     difference = np.abs(generated - np.array(image_data)).mean()
@@ -84,13 +86,16 @@ for i in range(generations):
         d = ImageDraw.Draw(generated)
         for l in g[0]:
             # print(l)
-            l[0] += np.random.normal(0, 30, [2]).astype(int)
+            l[0] += np.random.normal(0, 2, [2]).astype(int)
             l[0] %= dims
-            l[2] += np.random.normal(0, 30, [3]).astype(int)
+            l[2] += np.random.normal(0, 2, [3]).astype(int)
             l[2] %= [255] * 3
 
             pos, text, color = l
             d.text(tuple(pos), text, fill=tuple(color), font=font)
+            c = [pos, pos+3]
+            c = [tuple(w) for w in c]
+            # d.rectangle(c, fill=tuple(color))
 
         difference = np.abs(generated - np.array(image_data)).mean()
         population[j][1] = difference
