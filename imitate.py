@@ -4,6 +4,8 @@ import importlib.util
 import sys
 import glob
 from PIL import Image, ImageDraw
+import string
+import random
 
 # from ..textdiagrams.geometry import *
 sys.path.insert(0, '../text-diagrams/geometry')
@@ -40,8 +42,11 @@ print(image_data[0])
 width, height, channels = image_data.shape
 generated = Image.new('RGB', (width, height), (255,)*3)
 d = ImageDraw.Draw(generated)
-for i in range(1):
-    d.text((50, 50), 'test', fill=(255, 0, 0))
+for i in range(500):
+    pos = np.random.randint([0, 0], image_data.shape[:2], [2])
+    print(pos)
+    text = random.choice(string.ascii_letters)
+    d.text(tuple(pos), text, fill=(255, 0, 0))
 
 # generated.show()
 generated.save('./result-image.png')
