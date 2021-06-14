@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from matplotlib.image import imread
 import importlib.util
 import sys
@@ -43,6 +44,8 @@ population = []
 # generated = np.zeros_like(image_data)
 height, width, channels = image_data.shape
 num = 5
+history = []
+generations = 100
 
 for i in range(num):
     group = [[], None]
@@ -62,11 +65,12 @@ for i in range(num):
     group[1] = difference
     population.append(group)
 
-for i in range(5):
-    population.sort(key=lambda x: x[1])
+for i in range(generations):
+    population.sort(key=lambda x: x[1], reverse=True)
     # print(population)
     best = population[0]
     print(best[1])
+    history.append(best[1])
     population = [copy.deepcopy(best) for n in range(num)]
     for j, g in enumerate(population):
         generated = Image.new('RGB', dims, (255,)*3)
@@ -80,5 +84,8 @@ for i in range(5):
         difference = np.abs(generated - image_data).mean()
         population[j][1] = difference
 
+
 # generated.show()
 generated.save('./result-image.png')
+plt.plot(history)
+plt.show()
