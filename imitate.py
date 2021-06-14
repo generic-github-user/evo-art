@@ -2,6 +2,7 @@ import numpy as np
 from matplotlib.image import imread
 import importlib.util
 import sys
+import glob
 
 # from ..textdiagrams.geometry import *
 sys.path.insert(0, '../text-diagrams/geometry')
@@ -29,3 +30,7 @@ G = Geometry
 
 p = G.point.Point([1, 1])
 p.print()
+
+images = glob.glob('./sample-images/*.jpg')
+image_data = imread(images[0])
+print(image_data[0])
