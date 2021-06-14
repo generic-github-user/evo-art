@@ -3,6 +3,7 @@ from matplotlib.image import imread
 import importlib.util
 import sys
 import glob
+from PIL import Image, ImageDraw
 
 # from ..textdiagrams.geometry import *
 sys.path.insert(0, '../text-diagrams/geometry')
@@ -34,3 +35,13 @@ p.print()
 images = glob.glob('./sample-images/*.jpg')
 image_data = imread(images[0])
 print(image_data[0])
+
+# generated = np.zeros_like(image_data)
+width, height, channels = image_data.shape
+generated = Image.new('RGB', (width, height), (255,)*3)
+d = ImageDraw.Draw(generated)
+for i in range(1):
+    d.text((50, 50), 'test', fill=(255, 0, 0))
+
+# generated.show()
+generated.save('./result-image.png')
