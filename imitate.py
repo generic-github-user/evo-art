@@ -37,16 +37,28 @@ p.print()
 images = glob.glob('./sample-images/*.jpg')
 image_data = imread(images[0])
 print(image_data[0])
+population = []
 
 # generated = np.zeros_like(image_data)
-width, height, channels = image_data.shape
-generated = Image.new('RGB', (width, height), (255,)*3)
-d = ImageDraw.Draw(generated)
-for i in range(500):
-    pos = np.random.randint([0, 0], image_data.shape[:2], [2])
-    print(pos)
-    text = random.choice(string.ascii_letters)
-    d.text(tuple(pos), text, fill=(255, 0, 0))
+height, width, channels = image_data.shape
+
+for i in range(20):
+    group = [[], None]
+    dims = (width, height)
+    generated = Image.new('RGB', dims, (255,)*3)
+    d = ImageDraw.Draw(generated)
+    for j in range(500):
+        a = [None] * 2
+        pos = np.random.randint([0, 0], dims, [2])
+        # print(pos)
+        text = random.choice(string.ascii_letters)
+        color = [255, 0, 0]
+        d.text(tuple(pos), text, fill=tuple(color))
+        a = pos, text
+        group[0].append(a)
+    difference = np.abs(generated - image_data).mean()
+    group[1] = difference
+    population.append(group)
 
 # generated.show()
 generated.save('./result-image.png')
